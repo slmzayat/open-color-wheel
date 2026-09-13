@@ -1,109 +1,54 @@
-# The contract
+# The Open Color Wheel Contract
 
-What Open Color Wheel promises, what it deliberately does not, and what counts
-as a breaking change. Everything here is asserted by `scripts/verify.mjs` and
-enforced on every commit. A guarantee that isn't tested is a guarantee that
-quietly rots — which is roughly how the original Open Color ended up needing
-this rewrite.
+This document defines what Open Color Wheel guarantees, what it explicitly omits, and what constitutes a breaking change. All promises are validated by `scripts/verify.mjs` on every commit.
 
 ## Promises
 
-**P1 — Solid pairing.** Every chromatic hue's `solid` step (600) clears 4.5:1
-against its own `on-solid` foreground. `on-solid` is computed per hue, not
-assumed to be white.
+* **P1 - Solid Pairing:** Every chromatic hue's `solid` step (600) achieves $\ge 4.5:1$ contrast against its hue-specific `on-solid` foreground.
+* **P2 - Accent Text Contrast:** Every hue's step 700 achieves $\ge 4.5:1$ contrast against its step 50 background.
+* **P3 - Gray AAA Compliance:** Every gray scale step 700 achieves $\ge 7:1$ contrast against white.
+* **P4 - Chromatic AA Compliance:** Every chromatic hue step 700 achieves $\ge 4.5:1$ contrast against white.
+* **P5 - Component Border Contrast:** `border-strong` achieves $\ge 3:1$ contrast (WCAG 1.4.11) in light and dark modes.
+* **P6 - Portable Lightness Steps:** A step number represents identical lightness across all scales, within an OKLCH L tolerance of $\pm 0.012$.
+* **P7 - Monotonic Progression:** Every scale darkens continuously from step 50 to step 950.
 
-**P2 — Accent text on accent background.** Every hue's step 700 clears 4.5:1
-against its own step 50.
+## Non-Promises
 
-**P3 — Gray AAA.** Every gray family's step 700 clears 7:1 against white.
+Explicit omissions prevent hidden design trade-offs and invalid assumptions.
 
-**P4 — Chromatic AA.** Every chromatic hue's step 700 clears 4.5:1 against white.
+* **N1 - Universal Step 600 Legibility on White:** Step 600 is not universally readable on white. Seven hues in the yellow-to-cyan range achieve $4.09\text{--}4.48:1$ against white due to sRGB boundaries. P1 resolves this by selecting the optimal calculated foreground per hue.
+* **N2 - Chromatic AAA Standards:** Chromatic hues do not guarantee $7:1$ contrast. Six hues (lime, green, emerald, teal, cyan, sky) cap out at $6.4\text{--}6.7:1$ at step 700. Forcing AAA compliance on these hues would distort the shared lightness curve and violate P6.
+* **N3 - Interactive Standard Borders:** Step 300 (`border`) yields a $1.70:1$ ratio and is strictly decorative (for dividers and grid lines). Interactive components must use `border-strong` (P5).
+* **N4 - APCA Threshold Guarantees:** `apca.onWhite` and `apca.onBlack` scores use the reference `apca-w3` algorithm but carry no pass/fail assertions while W3C/AGWG APCA conformance criteria remain unfinalized.
+* **N5 - Shipped P3 CSS Tokens:** Display P3 values exist in `data/palette.json` for tooling, but `css/tokens.css` exports sRGB-bounded `oklch()` values. Dynamic P3 custom properties are designated for the `vivid` mode release.
+* **N6 - Mathematical Precision for Derived Alpha & Harmonies:** Alpha pairs (`alphaLight`, `alphaDark`) use least-squares approximations to match opaque steps over light/dark surfaces. Harmonies use nearest-neighbor angular matching across the 17 hue angles without enforcing tolerance caps.
 
-**P5 — Component borders.** `border-strong` clears 3:1 (WCAG 1.4.11) in both
-light and dark mode.
+## Stability & Versioning
 
-**P6 — Portable steps.** A step number means the same lightness on every scale,
-within 0.012 OKLCH L.
+Step numbers represent structural use cases (e.g., step 600 defines "solid fill"), allowing underlying color values to improve without breaking UI implementations.
 
-**P7 — Monotonic ramps.** Every scale darkens strictly from 50 to 950.
+### Major Changes (Breaking)
 
-## Deliberate non-promises
+* Removing a scale or step.
+* Reassigning a step's functional intent (`use` property in `spec.json`).
+* Altering or deleting a role definition.
+* Softening or removing any assertion listed in P1-P7.
 
-Stating these plainly is the point. A contract with silent exceptions is worse
-than a smaller contract.
+### Minor/Patch Changes (Non-Breaking)
 
-**N1 — Step 600 is not readable on white for every hue.** It is not, and it
-cannot be. Seven hues in the yellow-through-cyan region land at 4.09–4.48:1.
-This is a property of sRGB, not a bug: a yellow dark enough for 4.5:1 against
-white is no longer recognizably yellow. **This is exactly why P1 is written as
-a pairing.** For any color, contrast-vs-white × contrast-vs-black = 21 exactly,
-so the worse of the two can never fall below √21 ≈ 4.583. Picking the better
-foreground therefore always clears 4.5:1. The promise is achievable for all 17
-hues; "readable on white" never was.
+* Shifting Hex or OKLCH values resulting from generator refinements.
+* Updating gamut-mapping algorithms.
+* Introducing new scales, steps, roles, or export formats.
+* Adding P3 or APCA data fields.
+* Converting a non-promise into an enforced promise.
 
-**N2 — Chromatic hues are not promised AAA.** Grays are (P3). Six hues —
-lime, green, emerald, teal, cyan, sky — reach only 6.4–6.7:1 at step 700.
-Requiring AAA would force them off the shared lightness curve and break P6.
+## Verification
 
-**N3 — Plain `border` is decorative.** Step 300 is 1.70:1. Use it for dividers
-and table rules. It is not a valid sole boundary for an interactive component;
-`border-strong` is.
+Execute verification prior to CI merge:
 
-**N4 — APCA is reported, not promised.** Every step's `apca.onWhite` /
-`apca.onBlack` (Lc) is computed via `apca-w3`, the reference implementation
-licensed to W3C/AGWG — not hand-rolled, resolving the original concern about
-the math. What's still missing is a *threshold*: WCAG3's APCA conformance
-levels aren't finalized, so this project isn't going to invent its own
-pass/fail cutoff. All promises above (P1–P7) remain WCAG 2.x only. Lc is
-informational until APCA has an official threshold to promise against.
-
-**N5 — P3 is reported, not shipped as tokens.** Every step's `p3` field (plus
-`p3AlphaLight`/`p3AlphaDark`) is computed via gamut-mapping the unclamped
-OKLCH request into Display P3, so hues that clip in sRGB keep their extra
-chroma here. This is available in `data/palette.json` for tooling and the
-color detail view. `css/tokens.css` still ships sRGB-safe `oklch()` values
-only — turning P3 into actual CSS custom properties is `vivid` mode's job
-(see the roadmap), not a promise this contract makes today.
-
-**N6 — Alpha and harmonies are derived, not promised.** `alphaLight` /
-`alphaDark` / `p3AlphaLight` / `p3AlphaDark` are a best-fit {alpha,
-foreground} pair solved to *approximate* the opaque step over white or black
-— least squares across R/G/B, not an exact reconstruction, because one alpha
-value can't satisfy three independent channels at once. `harmonies`
-(complementary/analogous) are nearest-angle matches against the 17 hue
-angles, not guaranteed to be within any particular angular tolerance for
-every hue — some hues have wide open gaps on one side by design (see
-`spec.json`'s hue comments) and will snap further than others. Neither is an
-accessibility promise; both are reported as-computed.
-
-## Stability policy
-
-The durable half of this system is that **step numbers carry use cases**. Step
-600 means "solid fill" regardless of what hex it currently resolves to. That is
-what lets values improve without breaking anyone.
-
-**Breaking (major version):**
-
-- Removing a scale or a step
-- Changing what a step is *for* (the `use` field in `spec.json`)
-- Changing a role's meaning, or removing a role
-- Weakening or removing a promise above
-
-**Not breaking (minor or patch):**
-
-- Hex and OKLCH values shifting because the generator improved
-- Gamut mapping changing
-- Adding scales, steps, roles, or output formats
-- Adding P3 or APCA output alongside existing output
-- Tightening a promise, or converting a non-promise into a promise
-
-Without this written down, the first accuracy improvement becomes a frightening
-major-version decision. With it, values can be regenerated freely for years.
-
-## Verifying
+```bash
+npm run check
 
 ```
-npm run check      # build, then verify
-```
 
-Exits non-zero on any failed promise. Wire it into CI before anything else.
+The process returns a non-zero exit code if any promise check fails.
