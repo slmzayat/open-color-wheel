@@ -1,0 +1,26 @@
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      # Rebuild from spec, then assert the contract. This also catches the case
+      # where someone edits generated files by hand: the rebuild overwrites
+      # them and the diff shows up as a dirty tree.
+      - run: npm run check
+      - run: npm test
+      # Every file scripts/build.mjs writes belongs here. palette.js is as
+      # generated as palette.json is, and leaving it out let a hand-edited
+      # copy through.
+      - name: generated files must match the spec
+        run: git diff --exit-code css/tokens.css data/palette.json data/palette.js

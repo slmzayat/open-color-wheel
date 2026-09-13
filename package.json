@@ -1,0 +1,20 @@
+{
+  "name": "open-color-wheel",
+  "version": "0.1.0",
+  "description": "A modernized Open Color for native CSS: OKLCH primitives with contrast verified on every commit.",
+  "license": "MIT",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "verify": "node scripts/verify.mjs",
+    "check": "npm run build && npm run verify",
+    "test": "node --test",
+    "fonts": "node scripts/fonts.mjs"
+  },
+  "dependencies": {
+    "apca-w3": "^0.1.9",
+    "colorjs.io": "^0.5.2"
+  },
+  "devDependencies": {
+    "subset-font": "^2.7.0"
+  }
+}

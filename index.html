@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Open Color Wheel: OKLCH palette with verified contrast</title>
+  <meta name="description" content="242 open-source UI colors across 22 scales, built in OKLCH. Contrast is tested on every commit. Copy hex, OKLCH, P3 or alpha, or use the Tailwind v4 tokens.">
+  <link rel="canonical" href="https://slmzayat.github.io/open-color-wheel/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Open Color Wheel">
+  <meta property="og:description" content="242 open-source UI colors across 22 scales, built in OKLCH, with contrast tested on every commit.">
+  <meta property="og:url" content="https://slmzayat.github.io/open-color-wheel/">
+  <meta name="twitter:card" content="summary">
+
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌈</text></svg>">
+
+  <link rel="preload" href="fonts/MonaSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/MonaSans-Medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/HubotSans-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-row">
+      <a class="header-link" href="https://github.com/slmzayat/open-color-wheel" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <button id="theme-toggle" class="theme-toggle" type="button"></button>
+    </div>
+
+    <h1 class="gradient-ink">Open Color Wheel</h1>
+
+    <p class="lede">Open Color Wheel rebuilds the Open Color palette in <a class="gradient-ink" href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch" target="_blank" rel="noopener noreferrer">OKLCH</a> to unify perceptual lightness across hues. Step 600 holds the same lightness in red as in teal, within 0.012 OKLCH, across 17 chromatic hues and 5 temperature-adjusted gray families.</p>
+    <p class="lede">A build script parses a single specification file, calculates all color values, and evaluates contrast against <a class="gradient-ink" href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" target="_blank" rel="noopener noreferrer">WCAG</a> standards. The build fails CI immediately if any 4.5:1 contrast pairing drops below threshold.</p>
+
+    <dl class="stats" aria-label="Palette statistics">
+      <div class="stat">
+        <dt class="stat-number gradient-ink">242</dt>
+        <dd class="meta">Colors</dd>
+      </div>
+      <div class="stat">
+        <dt class="stat-number gradient-ink">22</dt>
+        <dd class="meta">Scales</dd>
+      </div>
+      <div class="stat">
+        <dt class="stat-number gradient-ink">1,579</dt>
+        <dd class="meta">Automated checks passed</dd>
+      </div>
+    </dl>
+  </header>
+
+  <main>
+    <section class="grid-section">
+      <h2 class="gradient-ink">Every scale, every step</h2>
+      <p>Hovering a swatch shows its design token usage. Clicking a swatch opens its color profile.</p>
+
+      <div class="grid-scroll">
+        <div id="grid" class="grid" aria-label="Color scales">
+          <div class="grid-groups" aria-hidden="true">
+            <span></span>
+            <span class="grid-group grid-group--backgrounds" style="grid-column: span 3">Backgrounds</span>
+            <span class="grid-group grid-group--borders" style="grid-column: span 2">Borders</span>
+            <span class="grid-group grid-group--interactive" style="grid-column: span 2">Interactive</span>
+            <span class="grid-group grid-group--text" style="grid-column: span 4">Text</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p class="footer-lede">Open Color Wheel modernizes <a class="gradient-ink" href="https://yeun.github.io/open-color/" target="_blank" rel="noopener noreferrer">Open Color</a> using OKLCH and native CSS.</p>
+
+    <dl class="credits">
+      <div class="credit">
+        <dt class="meta">Palette</dt>
+        <dd><a class="gradient-ink" href="https://github.com/yeun/open-color" target="_blank" rel="noopener noreferrer">Open Color</a> by Heeyeun Joo</dd>
+      </div>
+      <div class="credit">
+        <dt class="meta">Color math</dt>
+        <dd><a class="gradient-ink" href="https://colorjs.io" target="_blank" rel="noopener noreferrer">Color.js</a> and <a class="gradient-ink" href="https://github.com/Myndex/apca-w3" target="_blank" rel="noopener noreferrer">APCA</a></dd>
+      </div>
+      <div class="credit">
+        <dt class="meta">Typography</dt>
+        <dd><a class="gradient-ink" href="https://github.com/github/mona-sans" target="_blank" rel="noopener noreferrer">Mona Sans</a>, <a class="gradient-ink" href="https://github.com/github/hubot-sans" target="_blank" rel="noopener noreferrer">Hubot Sans</a>, and <a class="gradient-ink" href="https://monaspace.githubnext.com/" target="_blank" rel="noopener noreferrer">Monaspace Neon</a> (OFL-1.1)</dd>
+      </div>
+      <div class="credit">
+        <dt class="meta">Icons</dt>
+        <dd><a class="gradient-ink" href="https://github.com/google/material-design-icons" target="_blank" rel="noopener noreferrer">Material Design Icons</a> (Apache-2.0)</dd>
+      </div>
+      <div class="credit">
+        <dt class="meta">Motion</dt>
+        <dd>Micro-interactions built using <a class="gradient-ink" href="https://github.com/emilkowalski/skills" target="_blank" rel="noopener noreferrer">Emil Kowalski's design engineering principles</a></dd>
+      </div>
+      <div class="credit">
+        <dt class="meta">Inspiration</dt>
+        <dd><a class="gradient-ink" href="https://www.radix-ui.com/colors" target="_blank" rel="noopener noreferrer">Radix Colors</a> (detail card) and <a class="gradient-ink" href="https://www.pantone.com" target="_blank" rel="noopener noreferrer">Pantone</a> chip books</dd>
+      </div>
+      <div class="credit">
+        <dt class="meta">Platform</dt>
+        <dd>Native <a class="gradient-ink" href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch" target="_blank" rel="noopener noreferrer"><code>oklch()</code></a>, <a class="gradient-ink" href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/light-dark" target="_blank" rel="noopener noreferrer"><code>light-dark()</code></a>, <a class="gradient-ink" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog" target="_blank" rel="noopener noreferrer"><code>&lt;dialog&gt;</code></a>, and the <a class="gradient-ink" href="https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API" target="_blank" rel="noopener noreferrer">View Transitions API</a> (zero framework, zero runtime build step)</dd>
+      </div>
+      <div class="credit">
+        <dt class="meta">License</dt>
+        <dd>MIT (code and palette)</dd>
+      </div>
+    </dl>
+
+    <p class="colophon"><a class="gradient-ink" href="https://github.com/slmzayat/open-color-wheel" target="_blank" rel="noopener noreferrer">View the source on GitHub</a>.</p>
+  </footer>
+
+  <dialog id="detail" class="detail">
+    <section class="chip-card chip chip--hero">
+      <button type="button" class="chip__color" id="detail-swatch" title="Click to copy hex"></button>
+      <!-- Material Design icons (Apache 2.0): navigation/arrow_back and
+           navigation/close, both the 24dp filled set, so they share a stroke
+           weight and optical size rather than being two unrelated glyphs. -->
+      <button type="button" class="floating-icon back-button" id="back-button" aria-label="Back to previous color" hidden>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+      </button>
+      <form method="dialog">
+        <button type="submit" class="floating-icon close-button" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </form>
+      <div class="chip__label">
+        <p class="chip__name" id="detail-name"></p>
+        <p class="chip__code" id="detail-code"></p>
+      </div>
+    </section>
+
+    <div class="detail-body">
+      <div id="detail-fields"></div>
+
+      <section class="detail-harmonies-section">
+        <h3 class="harmonies-heading">Harmonies</h3>
+        <p class="section-intro">Other colors in the wheel that pair well with this one.</p>
+        <div id="detail-harmonies"></div>
+      </section>
+    </div>
+  </dialog>
+
+  <script src="data/palette.js"></script>
+  <script src="js/lib.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

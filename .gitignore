@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+*.log
+
+# Local agent instructions and scratch, kept out of the published repo.
+.claude/
+CLAUDE.md
+claude.md
+*.claude.md

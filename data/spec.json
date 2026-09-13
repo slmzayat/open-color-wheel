@@ -1,0 +1,75 @@
+{
+  "$comment": "SOURCE OF TRUTH. This is the only file in the repo with hand-authored numbers. Everything else (palette.json, tokens.css) is generated from it by scripts/build.mjs. Do not hand-edit generated files.",
+
+  "version": "0.1.0",
+
+  "steps": {
+    "$comment": "Step numbers match Tailwind v4's default scale so this can act as a drop-in replacement. contrastTarget is the WCAG 2.x ratio against WHITE that the achromatic lightness is solved for; every hue shares the same lightness curve so a step number means the same thing everywhere. 'use' is the contract: what the step is FOR. Values may change between versions; uses may not.",
+    "50":  { "contrastTarget": 1.05, "use": "Page background" },
+    "100": { "contrastTarget": 1.15, "use": "Subtle background" },
+    "200": { "contrastTarget": 1.35, "use": "Hover background" },
+    "300": { "contrastTarget": 1.70, "use": "Border" },
+    "400": { "contrastTarget": 2.30, "use": "Border, dark-mode text" },
+    "500": { "contrastTarget": 3.00, "use": "Placeholder, disabled" },
+    "600": { "contrastTarget": 4.50, "use": "Solid fill, primary" },
+    "700": { "contrastTarget": 7.00, "use": "Text on white (AAA)" },
+    "800": { "contrastTarget": 11.0, "use": "Heading text" },
+    "900": { "contrastTarget": 16.0, "use": "Body text" },
+    "950": { "contrastTarget": 19.5, "use": "Max contrast, dark background" }
+  },
+
+  "chromaEnvelope": {
+    "$comment": "Peak chroma per step, applied to every chromatic hue then gamut-mapped down to sRGB where the hue cannot reach it. Rises to a peak at 600 and falls off toward both ends, which is why light steps read as tints and dark steps as shades rather than muddy mid-saturation.",
+    "50": 0.020, "100": 0.045, "200": 0.075, "300": 0.11, "400": 0.14,
+    "500": 0.16, "600": 0.175, "700": 0.16, "800": 0.125, "900": 0.085, "950": 0.055
+  },
+
+  "grayFamilies": {
+    "$comment": "Five neutral families sharing the identical lightness curve. Only temperature differs. peakChroma is scaled by the same envelope shape as chromatic hues, so the tint strengthens toward the middle of the ramp and fades at the extremes. Hue and chroma follow Tailwind v4's own five families, which is the point: this palette already borrows Tailwind's step numbering for drop-in use, and the grays were the one place it diverged. Earlier values put slate and gray at the same 255deg hue and zinc 15deg away at chroma 0.004, so five of the ten family pairs sat under one JND apart and read as the same gray. Measured deltaE-OK at step 600 now runs 1.30 min / 2.70 median against 0.33 / 1.02 before.",
+    "slate":   { "hue": 257, "peakChroma": 0.046, "note": "Coolest, visibly blue-gray" },
+    "gray":    { "hue": 264, "peakChroma": 0.027, "note": "Cool tint, conventional default" },
+    "zinc":    { "hue": 286, "peakChroma": 0.016, "note": "Faint violet tint, the cool family nearest neutral" },
+    "neutral": { "hue": 0,   "peakChroma": 0.0,   "note": "True achromatic, chroma 0 at every step" },
+    "stone":   { "hue": 58,  "peakChroma": 0.013, "note": "Warm gray" }
+  },
+
+  "hues": {
+    "$comment": "17 chromatic hues in wheel order. The original 12 are inherited from Open Color and keep their names. Five (amber, emerald, sky, fuchsia, rose) were added to close gaps wider than the ~30deg average that also had an established name to fill them; they are exactly the five hue names Tailwind v4 adds beyond an Open Color-equivalent set. Gaps left open on purpose: red-orange (30), teal-cyan (30), yellow-lime (35), blue-indigo (15), violet-grape (25) -- either near the average already, or with no natural name.",
+    "red":     { "angle": 25,  "origin": "open-color" },
+    "orange":  { "angle": 55,  "origin": "open-color" },
+    "amber":   { "angle": 75,  "origin": "added",     "closes": "orange-yellow, 40deg" },
+    "yellow":  { "angle": 95,  "origin": "open-color" },
+    "lime":    { "angle": 130, "origin": "open-color" },
+    "green":   { "angle": 150, "origin": "open-color" },
+    "emerald": { "angle": 162, "origin": "added",     "closes": "green-teal, 25deg" },
+    "teal":    { "angle": 175, "origin": "open-color" },
+    "cyan":    { "angle": 205, "origin": "open-color" },
+    "sky":     { "angle": 232, "origin": "added",     "closes": "cyan-blue, 55deg, the widest" },
+    "blue":    { "angle": 260, "origin": "open-color" },
+    "indigo":  { "angle": 275, "origin": "open-color" },
+    "violet":  { "angle": 295, "origin": "open-color" },
+    "grape":   { "angle": 320, "origin": "open-color" },
+    "fuchsia": { "angle": 335, "origin": "added",     "closes": "grape-pink, 30deg" },
+    "pink":    { "angle": 350, "origin": "open-color" },
+    "rose":    { "angle": 8,   "origin": "added",     "closes": "pink-red wrap, 35deg" }
+  },
+
+  "roles": {
+    "$comment": "Semantic layer. Neutral roles bind to one gray family (swap familyBinding to re-skin the whole product). Accent roles are generated per hue. 'onSolid' is NOT hardcoded here -- the build computes it per hue, picking whichever of white/black gives better contrast against that hue's solid step. See CONTRACT.md.",
+    "familyBinding": "gray",
+    "neutral": {
+      "bg":            { "light": "white",  "dark": "950" },
+      "bg-subtle":     { "light": "50",     "dark": "900" },
+      "border":        { "light": "300",    "dark": "700", "$note": "Decorative only — dividers, table rules. 1.70:1, below the 3:1 in WCAG 1.4.11. Do not use as the sole visual boundary of an interactive component." },
+      "border-strong": { "light": "500",    "dark": "600", "$note": "Meets 1.4.11 (3:1 non-text). Use for input outlines, focus rings, and any border that identifies a control. Was step 400 (2.30:1) in early drafts, which failed — caught by scripts/verify.mjs." },
+      "text-muted":    { "light": "600",    "dark": "500" },
+      "text":          { "light": "900",    "dark": "200" },
+      "text-strong":   { "light": "black",  "dark": "50"  }
+    },
+    "accent": {
+      "solid":  { "light": "600", "dark": "600" },
+      "text":   { "light": "700", "dark": "400" },
+      "border": { "light": "500", "dark": "600" }
+    }
+  }
+}
