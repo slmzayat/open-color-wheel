@@ -44,6 +44,9 @@ First public release. 242 colors across 22 scales, 11 steps each.
   committed output and broke the CI drift check a day after any commit.
 - `CONTRACT.md` N1 and N2 corrected against the data. N2 named six hues capping
   below AAA at step 700 when there are seven, omitting yellow at 6.98:1.
+- Stat counters always settle on the real figure. The count-up read its target
+  from the element it then overwrote, so a run interrupted by a background tab
+  left the wrong number on the page for good.
 
 [Unreleased]: https://github.com/slmzayat/open-color-wheel/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/slmzayat/open-color-wheel/releases/tag/v0.1.0
