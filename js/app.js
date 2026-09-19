@@ -4,7 +4,6 @@ const grid = document.getElementById('grid');
 const dialog = document.getElementById('detail');
 const detailSwatch = document.getElementById('detail-swatch');
 const detailName = document.getElementById('detail-name');
-const detailCode = document.getElementById('detail-code');
 const detailFields = document.getElementById('detail-fields');
 const detailHarmonies = document.getElementById('detail-harmonies');
 const themeToggle = document.getElementById('theme-toggle');
@@ -231,7 +230,6 @@ function applyDetail(scaleName, stepKey) {
   state.current = { scaleName, stepKey };
   const scale = state.palette.scales[scaleName];
   const step = scale.steps[stepKey];
-  const meta = state.palette.steps[stepKey];
 
   backButton.hidden = state.history.length === 0;
 
@@ -239,18 +237,11 @@ function applyDetail(scaleName, stepKey) {
   detailSwatch.dataset.hex = step.hex;
   detailSwatch.setAttribute('aria-label', `Solid color ${step.hex}. Click to copy.`);
   detailName.textContent = `${capitalize(scaleName)} ${stepKey}`;
-  detailCode.textContent = step.hex;
-  dialog.style.setProperty('--name-ink', nameInk(scaleName));
-
   dialog.style.setProperty('--name-ink', nameInk(scaleName));
   dialog.style.setProperty('--ink-heading', nameInk(scaleName));
   dialog.style.setProperty('--ink-accent', accentInk(scaleName));
 
   detailFields.replaceChildren(
-    fieldGroup([
-      fieldRow('Usage', meta.use, { prose: true }),
-      fieldRow('Pairs with', `${pairsWith(step)} text`, { prose: true }),
-    ]),
     fieldGroup([
       fieldRow('Hex', step.hex, { copyable: true }),
       fieldRow('OKLCH', step.oklch, { copyable: true }),
@@ -264,6 +255,7 @@ function applyDetail(scaleName, stepKey) {
         fieldRow('P3 alpha, on dark', step.p3AlphaDark.css, { copyable: true }),
       ]),
       fieldGroup([
+        fieldRow('Pairs with', `${pairsWith(step)} text`, { prose: true }),
         fieldRow('Contrast with white', `${step.contrastWhite}:1`),
         fieldRow('Contrast with black', `${step.contrastBlack}:1`),
         fieldRow('APCA', `Lc ${step.apca.onWhite} on white, Lc ${step.apca.onBlack} on black`, { info: 'A newer, more accurate contrast model than WCAG. Reported for reference -- this project\'s contrast promises are still measured in WCAG, since APCA has no official pass/fail threshold yet.' }),

@@ -666,15 +666,6 @@ main {
   color: var(--name-ink);
 }
 
-.chip--hero .chip__code {
-  font-family: var(--font-mono);
-  font-feature-settings: var(--font-mono-features);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
 
 .site-footer {
   padding-bottom: var(--space-8);
