@@ -224,11 +224,6 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-::selection {
-  background: light-dark(var(--color-teal-200), var(--color-teal-900));
-  color: var(--ink-heading);
-}
-
 .header-link,
 .theme-toggle {
   position: relative;

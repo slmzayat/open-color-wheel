@@ -345,15 +345,17 @@ function fieldRow(label, value, { copyable = false, info = null, prose = false }
 function buildHarmonies(scale, stepKey) {
   detailHarmonies.replaceChildren();
 
+  const self = () => harmonyChip(state.current.scaleName, stepKey, { isCurrent: true });
+
   if (scale.harmonies) {
     detailHarmonies.appendChild(harmonyGroup(
       'Complementary', HARMONY_INFO.complementary,
-      [harmonyChip(scale.harmonies.complementary.name, stepKey)],
+      [self(), harmonyChip(scale.harmonies.complementary.name, stepKey)],
     ));
 
     detailHarmonies.appendChild(harmonyGroup(
       'Analogous', HARMONY_INFO.analogous,
-      scale.harmonies.analogous.map(h => harmonyChip(h.name, stepKey)),
+      [self(), ...scale.harmonies.analogous.map(h => harmonyChip(h.name, stepKey))],
     ));
   }
 
