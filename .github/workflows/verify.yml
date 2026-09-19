@@ -21,4 +21,4 @@ jobs:
       - run: npm test
       # Every file scripts/build.mjs writes belongs here.
       - name: generated files must match the spec
-        run: git diff --exit-code css/tokens.css data/palette.js
+        run: git diff --exit-code css/tokens.css data/palette.js og.png

@@ -7,7 +7,8 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "build": "node scripts/build.mjs",
+    "build": "node scripts/build.mjs && node scripts/og.mjs",
+    "og": "node scripts/og.mjs",
     "verify": "node scripts/verify.mjs",
     "check": "npm run build && npm run verify",
     "test": "node --test",
