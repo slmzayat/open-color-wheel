@@ -164,7 +164,11 @@ function resolve(l, c, h, isGray = false) {
 
   return {
     oklch: `oklch(${L.toFixed(3)} ${C.toFixed(3)} ${(H || 0).toFixed(1)})`,
-    hex: mapped.to('srgb').toString({ format: 'hex' }),
+    // collapse:false because colorjs shortens #777777 to #777 whenever the
+    // digits happen to pair up. That put two 3-digit values (neutral-600 and
+    // neutral-900) into an otherwise uniformly 6-digit public data file, which
+    // breaks any consumer that slices fixed-width channels out of the string.
+    hex: mapped.to('srgb').toString({ format: 'hex', collapse: false }),
     l: +L.toFixed(4), c: +C.toFixed(4), h: +(H || 0).toFixed(2),
     contrastWhite: +contrastVsWhite(mapped).toFixed(2),
     contrastBlack: +contrastVsBlack(mapped).toFixed(2),
