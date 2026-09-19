@@ -48,20 +48,15 @@ const FONTS = [
   { url: monaspace('MonaspaceNeon-Regular.woff2'), out: 'MonaspaceNeon-Regular.woff2' },
 ];
 
+/* All three families ship the same OFL-1.1 text under different copyright
+ * holders, so they are concatenated into one fonts/OFL.txt. OFL-1.1 requires
+ * the licence travel with the fonts along with each copyright notice; it does
+ * not require a separate file per family. */
 const LICENSES = [
-  {
-    url: `https://raw.githubusercontent.com/github/mona-sans/${MONA_SANS_TAG}/OFL.txt`,
-    out: 'OFL-MonaSans.txt',
-  },
-  {
-    // hubot-sans ships its OFL text as LICENSE rather than OFL.txt at this tag.
-    url: `https://raw.githubusercontent.com/github/hubot-sans/${HUBOT_SANS_TAG}/LICENSE`,
-    out: 'OFL-HubotSans.txt',
-  },
-  {
-    url: `https://raw.githubusercontent.com/githubnext/monaspace/${MONASPACE_TAG}/LICENSE`,
-    out: 'OFL-Monaspace.txt',
-  },
+  { name: 'Mona Sans', url: `https://raw.githubusercontent.com/github/mona-sans/${MONA_SANS_TAG}/OFL.txt` },
+  // hubot-sans ships its OFL text as LICENSE rather than OFL.txt at this tag.
+  { name: 'Hubot Sans', url: `https://raw.githubusercontent.com/github/hubot-sans/${HUBOT_SANS_TAG}/LICENSE` },
+  { name: 'Monaspace Neon', url: `https://raw.githubusercontent.com/githubnext/monaspace/${MONASPACE_TAG}/LICENSE` },
 ];
 
 /**
@@ -102,12 +97,21 @@ async function main() {
     console.log(`${font.out}  ${(buffer.length / 1024).toFixed(0)}KB -> ${(subset.length / 1024).toFixed(0)}KB`);
   }
 
+  const notices = [];
   for (const license of LICENSES) {
     const res = await fetch(license.url);
     if (!res.ok) throw new Error(`fetch failed for ${license.url}: ${res.status}`);
-    writeFileSync(join(FONTS_DIR, license.out), await res.text());
-    console.log(license.out);
+    notices.push(`${'='.repeat(72)}
+${license.name}
+${license.url}
+${'='.repeat(72)}
+
+${await res.text()}`);
   }
+  writeFileSync(join(FONTS_DIR, 'OFL.txt'), notices.join('
+
+'));
+  console.log('OFL.txt');
 
   console.log(`\ntotal font payload: ${(total / 1024).toFixed(0)}KB`);
 }

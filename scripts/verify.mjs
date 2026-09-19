@@ -13,7 +13,11 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const palette = JSON.parse(readFileSync(join(ROOT, 'data/palette.json'), 'utf8'));
+/* palette.js is the single generated data artifact -- it is a plain global
+ * assignment so the page can load it over file://, so strip the wrapper to get
+ * back to JSON rather than keeping a second .json copy in sync. */
+const paletteSource = readFileSync(join(ROOT, 'data/palette.js'), 'utf8');
+const palette = JSON.parse(paletteSource.slice(paletteSource.indexOf('{'), paletteSource.lastIndexOf('}') + 1));
 
 const AA_TEXT = 4.5;
 const AA_LARGE = 3.0;
@@ -192,4 +196,4 @@ if (failures) {
   console.log(`FAILED  ${failures} of ${checks} checks\n`);
   process.exit(1);
 }
-console.log(`PASSED  all ${checks} checks  (v${palette.version}, generated ${palette.generated})\n`);
+console.log(`PASSED  all ${checks} checks  (v${palette.version})\n`);

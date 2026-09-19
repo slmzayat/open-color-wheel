@@ -608,7 +608,7 @@ main {
   .chip--grid:hover,
   .chip--grid:focus-visible {
     position: relative;
-    z-index: 2;
+    z-index: 20;
 
     transform: scale(1.18);
     box-shadow: 0 0.375rem 1rem rgb(0 0 0 / 14%);

@@ -1,8 +1,8 @@
 # 🌈 Open Color Wheel
 
-Open Color Wheel provides 242 open-source UI colors across 22 scales (5 gray families, 17 chromatic hues) authored in [OKLCH](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch). Each scale contains 11 steps (50 to 950, aligning with Tailwind v4). The build pipeline verifies WCAG contrast targets on every commit.
+242 open-source UI colors in [OKLCH](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch): 22 scales (5 gray families, 17 hues) of 11 steps each, numbered 50 to 950 like Tailwind v4. CI verifies every contrast promise on every commit.
 
-[Live Demo](https://slmzayat.github.io/open-color-wheel/)
+[Live demo](https://slmzayat.github.io/open-color-wheel/)
 
 ## Usage
 
@@ -13,74 +13,39 @@ Open Color Wheel provides 242 open-source UI colors across 22 scales (5 gray fam
 ```css
 .button {
   background: var(--color-blue-solid);
-  color: var(--color-blue-on-solid); /* Computed per hue; never assumes white */
+  color: var(--color-blue-on-solid); /* computed per hue, never assumed white */
 }
 ```
 
-Dark mode requires no additional CSS. Color roles use [`light-dark()`](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/light-dark), so changing `color-scheme` toggles modes automatically. `tokens.css` also includes a Tailwind v4 `@theme` block for direct integration.
+Dark mode needs no extra CSS. Roles use [`light-dark()`](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/light-dark), so setting `color-scheme` switches modes. `tokens.css` also emits a Tailwind v4 `@theme` block.
 
-## Architecture
+## Why
 
-The original Open Color palette established effective naming conventions but relied on static, hand-picked hex values with unverified contrast targets. This project replaces static values with programmatic generation:
+Open Color named its scales well but hand-picked its hex values, so contrast drifted from hue to hue. This project keeps the naming and generates the numbers. OKLCH holds perceptual lightness steady, so step 600 reads the same weight in red as in teal. `data/spec.json` holds every hand-authored number; everything else is built from it. Each color also carries P3 values, alpha approximations, [APCA](https://github.com/Myndex/apca-w3) scores, and harmonies snapped to real tokens.
 
-* **OKLCH Color Space:** Standardizes perceptual lightness across all hues for every step.
-* **Automated Verification:** Build scripts validate contrast rules on every commit and exit non-zero on regression.
-* **Single Source of Truth:** `data/spec.json` stores all hand-written parameters. A build script derives all generated files.
+## The contrast guarantee
 
-Each token includes P3 values, alpha masks for light and dark backgrounds, [APCA](https://github.com/Myndex/apca-w3) ratings, and dynamic color harmonies snapped to existing palette tokens.
-
-## Contrast Guarantee
-
-Step 600 cannot guarantee 4.5:1 contrast against white across all hues, because sRGB yellow loses its hue identity when darkened to that threshold.
-
-Instead, every hue provides an `on-solid` foreground token that calculates the optimal contrast pairing between black and white:
+Step 600 cannot reach 4.5:1 against white for every hue, because sRGB yellow loses its identity long before it gets that dark. So every hue ships an `on-solid` foreground that picks the better of black and white:
 
 $$\text{contrast}_{\text{white}} \times \text{contrast}_{\text{black}} = 21$$
 
-Because the product equals 21, the lower-contrast option never drops below $\sqrt{21} \approx 4.583$, guaranteeing WCAG AA compliance for every `on-solid` pair.
-
-Full promises, non-promises, and the stability policy are documented in [`docs/CONTRACT.md`](docs/CONTRACT.md).
+Because the two ratios multiply to 21, the better one never falls below $\sqrt{21} \approx 4.583$. Every `on-solid` pair clears WCAG AA. [`docs/CONTRACT.md`](docs/CONTRACT.md) lists the rest, including what this project deliberately does not promise.
 
 ## Development
 
 ```bash
 npm install
-npm run check     # Rebuilds from spec and verifies contrast rules
-npm test          # Runs unit tests for page logic
-npm run fonts     # Fetches and subsets web fonts
+npm run check     # rebuild from spec, then assert the contract
+npm test          # unit tests for page logic
+npm run fonts     # fetch and subset the web fonts
 ```
 
-Do not edit `css/tokens.css`, `data/palette.json`, or `data/palette.js` directly. Modify `data/spec.json` and execute the build script. CI pipeline checks reject commits containing file drift.
-
-## Repository Structure
-
-| Path | Description |
-| --- | --- |
-| `data/spec.json` | Source of truth containing all input parameters |
-| `data/palette.*` | Generated palette datasets with measured contrast values |
-| `css/tokens.css` | Generated CSS custom properties |
-| `css/site.css` | Documentation site styles |
-| `index.html` | Documentation site markup |
-| `scripts/` | Build, verification, and font pipeline scripts |
-| `js/` | Modular application logic |
-| `test/` | Unit tests for `js/lib.js` |
-| `fonts/` | Generated Latin-subset WOFF2 font files and license text |
-| `docs/CONTRACT.md` | Promises, non-promises, and stability policy |
-| `.github/workflows/` | CI pipeline enforcing the contract |
+Edit `data/spec.json`, never `css/tokens.css` or `data/palette.js`. CI rebuilds and rejects any drift.
 
 ## Credits
 
-* [Open Color](https://github.com/yeun/open-color) by Heeyeun Joo (original palette structure)
-* [Color.js](https://colorjs.io) by Lea Verou and Chris Lilley (color space transformations)
-* [apca-w3](https://github.com/Myndex/apca-w3) by Andrew Somers (APCA contrast calculation)
-* [Radix Colors](https://www.radix-ui.com/colors) (detail card architecture)
-* [Pantone](https://www.pantone.com) (swatch layout design)
-* [Mona Sans, Hubot Sans](https://github.com/github/mona-sans), and [Monaspace](https://monaspace.githubnext.com/) by GitHub (typography)
-* [Material Design Icons](https://github.com/google/material-design-icons) by Google (iconography)
-* [Emil Kowalski](https://github.com/emilkowalski/skills) (motion design standards)
+[Open Color](https://github.com/yeun/open-color) by Heeyeun Joo (original palette), [Color.js](https://colorjs.io) by Lea Verou and Chris Lilley, [apca-w3](https://github.com/Myndex/apca-w3) by Andrew Somers, [Radix Colors](https://www.radix-ui.com/colors) and [Pantone](https://www.pantone.com) (interface), [Mona Sans, Hubot Sans](https://github.com/github/mona-sans) and [Monaspace](https://monaspace.githubnext.com/) by GitHub, [Material Design Icons](https://github.com/google/material-design-icons) by Google, [Emil Kowalski](https://github.com/emilkowalski/skills) (motion), and Claude Opus 5 by Anthropic (pair programming).
 
 ## License
 
-* Code and Palette: MIT
-* Fonts: OFL-1.1
-* Icons: Apache-2.0
+Code and palette MIT. Fonts OFL-1.1. Icons Apache-2.0.

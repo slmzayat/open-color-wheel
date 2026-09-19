@@ -2,8 +2,8 @@
  * Open Color Wheel — build
  *
  * Reads data/spec.json (the only hand-authored numbers in the repo) and emits:
- *   data/palette.json   — every resolved color with its measured contrast
- *   data/palette.js     — the same data as a global, for index.html
+ *   data/palette.js     — every resolved color with its measured contrast,
+ *                         as a global that index.html and verify.mjs both read
  *   css/tokens.css      — the shippable custom properties
  *
  * Run: node scripts/build.mjs
@@ -268,21 +268,23 @@ for (const [name, scale] of Object.entries(scales)) {
   };
 }
 
+/* No build timestamp here on purpose. The same spec has to produce a
+ * byte-identical palette, because CI asserts exactly that with a
+ * git diff --exit-code; a date field fails that check on any day after
+ * the commit. Provenance lives in the git history, not in the artifact. */
 const palette = {
   version: spec.version,
-  generated: new Date().toISOString().slice(0, 10),
   steps: spec.steps,
   scales,
 };
 
-writeFileSync(join(ROOT, 'data/palette.json'), JSON.stringify(palette, null, 2) + '\n');
-
-/* Same data, as a plain global instead of a JSON file. index.html loads this
- * with a classic (non-module) <script src>, and js/app.js reads
- * window.OCW_PALETTE synchronously -- no fetch() involved. fetch()-ing a
- * local file is blocked as cross-origin in every major browser, so a page
- * that only works over http(s) breaks the instant someone opens it with a
- * plain double-click instead of a server. */
+/* One data artifact, not two copies of the same numbers. It is a plain global
+ * rather than JSON because index.html loads it with a classic <script src> and
+ * js/app.js reads window.OCW_PALETTE synchronously -- fetch()-ing a local file
+ * is blocked as cross-origin in every major browser, so a JSON-plus-fetch page
+ * breaks the instant someone opens it with a double-click instead of a server.
+ * scripts/verify.mjs parses this same file. It stays minified: it is the only
+ * data payload the page downloads, and nothing reads it by hand. */
 writeFileSync(join(ROOT, 'data/palette.js'), `window.OCW_PALETTE = ${JSON.stringify(palette)};\n`);
 
 /* ---------- emit CSS ----------------------------------------------------- */
@@ -347,6 +349,5 @@ writeFileSync(join(ROOT, 'css/tokens.css'), css);
 
 const total = Object.keys(scales).length * STEPS.length;
 console.log(`built ${Object.keys(scales).length} scales x ${STEPS.length} steps = ${total} colors`);
-console.log(`  data/palette.json`);
 console.log(`  data/palette.js`);
 console.log(`  css/tokens.css`);

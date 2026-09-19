@@ -1,5 +1,5 @@
 {
-  "$comment": "SOURCE OF TRUTH. This is the only file in the repo with hand-authored numbers. Everything else (palette.json, tokens.css) is generated from it by scripts/build.mjs. Do not hand-edit generated files.",
+  "$comment": "SOURCE OF TRUTH. This is the only file in the repo with hand-authored numbers. Everything else (palette.js, tokens.css) is generated from it by scripts/build.mjs. Do not hand-edit generated files.",
 
   "version": "0.1.0",
 

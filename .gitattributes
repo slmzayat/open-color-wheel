@@ -1,0 +1,10 @@
+# The build is authored on Windows (core.autocrlf=true) and verified on Linux
+# CI, where `git diff --exit-code` compares the regenerated files against the
+# committed ones. Without a normalised line ending every generated file reads
+# as wholly rewritten and the drift check fails on a clean tree.
+* text=auto eol=lf
+
+*.woff2 binary
+*.png binary
+*.jpg binary
+*.ico binary
