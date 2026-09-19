@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "A modernized Open Color for native CSS: OKLCH primitives with contrast verified on every commit.",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "build": "node scripts/build.mjs",
     "verify": "node scripts/verify.mjs",
