@@ -50,6 +50,21 @@
     "Liberation Mono", menlo, monospace;
   --font-mono-features: "tnum" 1, "zero" 1, "calt" 1;
 
+  /* Overrides the shipped --color-text for this page only. tokens.css still
+   * exports gray 900/200 for consumers; the site softens light mode to 800
+   * (11.05:1, comfortably AAA) and lifts dark mode to 100 (16.91:1). */
+  --color-text: light-dark(var(--color-gray-800), var(--color-gray-100));
+
+  /* Column placement for the role banner above the grid. The role bindings
+   * invert between schemes -- bg is 50 on light and 950 on dark, text is 900
+   * on light and 200 on dark -- so the banner has to invert with them or it
+   * labels the wrong end of every ramp. Mirrored, not merely reordered:
+   * 3/2/2/4 becomes 4/2/2/3. */
+  --groups-backgrounds: 2 / span 3;
+  --groups-borders: 5 / span 2;
+  --groups-interactive: 7 / span 2;
+  --groups-text: 9 / span 4;
+
   --ink-heading: light-dark(var(--color-teal-900), var(--color-teal-100));
   --ink-accent: var(--color-teal-text);
 
@@ -113,6 +128,22 @@
 
 :root[data-theme="light"] { color-scheme: light; }
 :root[data-theme="dark"] { color-scheme: dark; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --groups-text: 2 / span 4;
+    --groups-interactive: 6 / span 2;
+    --groups-borders: 8 / span 2;
+    --groups-backgrounds: 10 / span 3;
+  }
+}
+
+:root[data-theme="dark"] {
+  --groups-text: 2 / span 4;
+  --groups-interactive: 6 / span 2;
+  --groups-borders: 8 / span 2;
+  --groups-backgrounds: 10 / span 3;
+}
 
 * {
   box-sizing: border-box;
@@ -480,6 +511,11 @@ main {
 .grid-groups {
   margin-bottom: var(--space-1);
 }
+
+.grid-group--backgrounds { grid-column: var(--groups-backgrounds); }
+.grid-group--borders { grid-column: var(--groups-borders); }
+.grid-group--interactive { grid-column: var(--groups-interactive); }
+.grid-group--text { grid-column: var(--groups-text); }
 
 .grid-group {
   padding-bottom: var(--space-2);
