@@ -48,12 +48,17 @@ function solveLightness(targetRatio) {
  * "Reducing chroma only" is the intent, not quite the outcome: colorjs
  * finishes with a clip pass when chroma reduction alone leaves a colour a
  * hair outside the gamut, and that pass does move hue. Audited across all 187
- * chromatic colours, the worst drift is 20.97deg at amber-950 and 17.8deg at
- * blue-50 -- always at the ends of the ramp where chroma is lowest, so the
- * worst perceptual error it causes is dE-OK 1.44, barely above one JND.
- * CSS Color 4's own gamut mapping ("css") was measured as worse here: 26.65deg
- * drift and dE 1.68. Lightness is unaffected either way; the spread across
- * scales stays at 0.0102, inside the 0.012 that P6 promises.
+ * chromatic colours, the worst drift is 20.97deg at amber-950 and 17.80deg at
+ * blue-50 -- always at the ends of the ramp where chroma is lowest. The worst
+ * perceptual error is dE-OK 0.080 at cyan-700, against a JND of roughly 0.02
+ * in that scale, so it is visible under direct comparison but not large.
+ * CSS Color 4's own gamut mapping ("css") drifts hue further, 26.74deg at
+ * blue-50, which is why oklch.c is used; on dE-OK the two are within 0.001 of
+ * each other. Lightness is unaffected either way; the spread across scales
+ * stays at 0.0102, inside the 0.012 that P6 promises.
+ *
+ * test/artifacts.test.mjs asserts these bounds, so a colorjs upgrade that
+ * moves them fails there rather than silently reshaping the palette.
  */
 function toSrgb(color) {
   return color.inGamut('srgb')

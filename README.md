@@ -28,10 +28,19 @@ Open Color named its scales well but hand-picked its hex values, so contrast dri
 ```bash
 npm install
 npm run check   # rebuild from spec, then assert the contract
-npm test
+npm test        # unit tests
 ```
 
 Edit `data/spec.json`, never `css/tokens.css` or `data/palette.js`. CI rejects any drift.
+
+The two commands check different things, and CI runs both:
+
+- **`npm run verify`** asserts the 1579 contract checks against the generated
+  palette. It tells you the output is wrong, not which line made it wrong.
+- **`npm test`** covers the arithmetic in `scripts/color.mjs` and the shape of
+  the generated files, including inputs the spec never produces: hue wraparound,
+  degenerate alpha solves, gamut edges, and the drift budget the mapping has to
+  stay inside. It caught a hex serialization bug the contract checks could not see.
 
 ## Credits
 
