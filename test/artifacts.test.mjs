@@ -167,6 +167,31 @@ test('oklch.c remains a better choice than the css mapping method', () => {
     'css now drifts hue less than oklch.c');
 });
 
+test('no harmony collapses onto a duplicate or self-referential hue', () => {
+  // scripts/build.mjs states this as an audited property and skips the
+  // exclusion logic that a tighter hue spacing would need. Asserted here so
+  // adding or moving a hue in the spec cannot quietly invalidate it.
+  for (const [name, scale] of named(palette.scales)) {
+    if (scale.kind !== 'chromatic') continue;
+    const h = scale.harmonies;
+    assert.ok(h, `${name} has no harmonies`);
+
+    const [near, far] = h.analogous;
+    const [split1, split2] = h.splitComplementary;
+    const [tri1, tri2] = h.triadic;
+
+    assert.notEqual(near.name, far.name, `${name} analogous names one hue twice`);
+    assert.notEqual(split1.name, split2.name, `${name} split-complementary names one hue twice`);
+    assert.notEqual(tri1.name, tri2.name, `${name} triadic names one hue twice`);
+    assert.ok(![split1.name, split2.name].includes(h.complementary.name),
+      `${name} split-complementary landed on its own complement, defeating the point`);
+
+    for (const ref of [h.complementary, near, far, split1, split2, tri1, tri2]) {
+      assert.notEqual(ref.name, name, `${name} is listed as its own harmony`);
+    }
+  }
+});
+
 test('the five gray families stay perceptually distinct', () => {
   const grays = named(palette.scales).filter(([, s]) => s.kind === 'gray').map(([n]) => n);
   assert.equal(grays.length, 5);
