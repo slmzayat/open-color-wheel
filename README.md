@@ -2,6 +2,8 @@
 
 242 open-source UI colors in [OKLCH](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch): 22 scales of 11 steps, numbered 50 to 950 like Tailwind v4. CI verifies every contrast promise on every commit.
 
+**Mathematically rigorous.** Contrast floors, gamut-mapping drift, and `:root` / `@theme` token parity are asserted in CI, not assumed.
+
 **[Live demo](https://slmzayat.github.io/open-color-wheel/)**
 
 ## Use it
