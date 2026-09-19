@@ -71,9 +71,16 @@ for (const [name, scale] of Object.entries(scales)) {
 
 for (const [name, scale] of Object.entries(scales)) {
   if (scale.kind !== 'chromatic') continue;
+  const snap = offset => nearestHue(spec.hues, scale.angle + offset, name);
+  // Split-complementary deliberately skips the complement for the two hues
+  // flanking it, and triadic takes the even thirds. Audited across all 17
+  // hues: no pair ever snaps to the same name, and no split-complement ever
+  // lands on the complement, so neither needs extra exclusion logic.
   scale.harmonies = {
-    complementary: nearestHue(spec.hues, scale.angle + 180, name),
-    analogous: [nearestHue(spec.hues, scale.angle + 30, name), nearestHue(spec.hues, scale.angle - 30, name)],
+    complementary: snap(180),
+    analogous: [snap(30), snap(-30)],
+    splitComplementary: [snap(150), snap(210)],
+    triadic: [snap(120), snap(240)],
   };
 }
 

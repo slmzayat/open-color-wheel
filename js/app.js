@@ -10,12 +10,6 @@ const detailHarmonies = document.getElementById('detail-harmonies');
 const themeToggle = document.getElementById('theme-toggle');
 const backButton = document.getElementById('back-button');
 
-const HARMONY_INFO = {
-  complementary: 'The color directly opposite this one on the wheel. Use it sparingly, for an accent that needs to stand out against this color.',
-  analogous: "This hue's two neighbors on the wheel. They share a family resemblance, so they combine easily without clashing.",
-  monochromatic: 'Every step of this same hue, from lightest to darkest. The safest palette: it already agrees with itself.',
-};
-
 function main() {
   if (!window.OCW_PALETTE) {
     grid.textContent = 'Could not load data/palette.js. Run npm run build, then reload the page.';
@@ -345,23 +339,26 @@ function fieldRow(label, value, { copyable = false, info = null, prose = false }
 function buildHarmonies(scale, stepKey) {
   detailHarmonies.replaceChildren();
 
-  const self = () => harmonyChip(state.current.scaleName, stepKey, { isCurrent: true });
+  // Each row opens with the color being viewed, so a row reads as a
+  // relationship rather than a list of unrelated suggestions.
+  const self = () => harmonyChip(state.current.scaleName, stepKey);
 
   if (scale.harmonies) {
-    detailHarmonies.appendChild(harmonyGroup(
-      'Complementary', HARMONY_INFO.complementary,
-      [self(), harmonyChip(scale.harmonies.complementary.name, stepKey)],
+    const { complementary, analogous, splitComplementary, triadic } = scale.harmonies;
+    const related = (title, hues) => detailHarmonies.appendChild(harmonyGroup(
+      title, [self(), ...hues.map(h => harmonyChip(h.name, stepKey))],
     ));
 
-    detailHarmonies.appendChild(harmonyGroup(
-      'Analogous', HARMONY_INFO.analogous,
-      [self(), ...scale.harmonies.analogous.map(h => harmonyChip(h.name, stepKey))],
-    ));
+    related('Complementary', [complementary]);
+    related('Analogous', analogous);
+    related('Split-Complementary', splitComplementary);
+    related('Triadic', triadic);
   }
 
+  // Monochromatic keeps its current-step marker: with eleven near-identical
+  // chips, the ring is the only thing saying which one is open.
   detailHarmonies.appendChild(harmonyGroup(
-    'Monochromatic', HARMONY_INFO.monochromatic,
-
+    'Monochromatic',
     stepKeys().map(s => harmonyChip(state.current.scaleName, s, {
       label: s,
       isCurrent: s === stepKey,
@@ -369,7 +366,7 @@ function buildHarmonies(scale, stepKey) {
   ));
 }
 
-function harmonyGroup(title, explanation, chips) {
+function harmonyGroup(title, chips) {
   const group = document.createElement('div');
   group.className = 'harmony-group';
 
@@ -377,11 +374,6 @@ function harmonyGroup(title, explanation, chips) {
   h.className = 'harmony-group-title';
   h.textContent = title;
   group.appendChild(h);
-
-  const p = document.createElement('p');
-  p.className = 'harmony-explanation';
-  p.textContent = explanation;
-  group.appendChild(p);
 
   group.appendChild(chipRow(chips));
   return group;

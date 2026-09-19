@@ -956,12 +956,6 @@ main {
   font-weight: var(--weight-bold);
 }
 
-.harmony-explanation {
-  margin-bottom: var(--space-3);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-}
-
 .harmony-row {
   display: flex;
   flex-wrap: wrap;

@@ -183,7 +183,9 @@ for (const [name, scale] of Object.entries(palette.scales)) {
 
 const hueNames = new Set(chromatic.map(([name]) => name));
 for (const [name, scale] of chromatic) {
-  const refs = [scale.harmonies?.complementary, ...(scale.harmonies?.analogous || [])];
+  const h = scale.harmonies;
+  const refs = [h?.complementary, ...(h?.analogous || []),
+    ...(h?.splitComplementary || []), ...(h?.triadic || [])];
   const valid = refs.every(r => r && hueNames.has(r.name) && r.name !== name);
   valid
     ? pass(`${name} harmonies`, refs.map(r => r.name).join(', '))
