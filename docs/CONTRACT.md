@@ -16,12 +16,12 @@ This document defines what Open Color Wheel guarantees, what it explicitly omits
 
 Explicit omissions prevent hidden design trade-offs and invalid assumptions.
 
-* **N1 - Universal Step 600 Legibility on White:** Step 600 is not universally readable on white. Seven hues in the yellow-to-cyan range achieve $4.09\text{--}4.48:1$ against white due to sRGB boundaries. P1 resolves this by selecting the optimal calculated foreground per hue.
-* **N2 - Chromatic AAA Standards:** Chromatic hues do not guarantee $7:1$ contrast. Six hues (lime, green, emerald, teal, cyan, sky) cap out at $6.4\text{--}6.7:1$ at step 700. Forcing AAA compliance on these hues would distort the shared lightness curve and violate P6.
+* **N1 - Universal Step 600 Legibility on White:** Step 600 is not universally readable on white. Seven hues, yellow through sky, achieve $4.09\text{--}4.49:1$ against white due to sRGB boundaries. P1 resolves this by selecting the optimal calculated foreground per hue.
+* **N2 - Chromatic AAA Standards:** Chromatic hues do not guarantee $7:1$ contrast. Seven hues (yellow, lime, green, emerald, teal, cyan, sky) cap out at $6.42\text{--}6.98:1$ at step 700. Forcing AAA compliance on these hues would distort the shared lightness curve and violate P6.
 * **N3 - Interactive Standard Borders:** Step 300 (`border`) yields a $1.70:1$ ratio and is strictly decorative (for dividers and grid lines). Interactive components must use `border-strong` (P5).
 * **N4 - APCA Threshold Guarantees:** `apca.onWhite` and `apca.onBlack` scores use the reference `apca-w3` algorithm but carry no pass/fail assertions while W3C/AGWG APCA conformance criteria remain unfinalized.
 * **N5 - Shipped P3 CSS Tokens:** Display P3 values exist in `data/palette.js` for tooling, but `css/tokens.css` exports sRGB-bounded `oklch()` values. Dynamic P3 custom properties are designated for the `vivid` mode release.
-* **N6 - Mathematical Precision for Derived Alpha & Harmonies:** Alpha pairs (`alphaLight`, `alphaDark`) use least-squares approximations to match opaque steps over light/dark surfaces. Harmonies use nearest-neighbor angular matching across the 17 hue angles without enforcing tolerance caps.
+* **N6 - Mathematical Precision for Derived Alpha & Harmonies:** Alpha pairs (`alphaLight`, `alphaDark`) use least-squares approximations to match opaque steps over light/dark surfaces. Harmonies (complementary, analogous, split-complementary, triadic) use nearest-neighbor angular matching across the 17 hue angles without enforcing tolerance caps.
 
 ## Stability & Versioning
 
@@ -52,3 +52,7 @@ npm run check
 ```
 
 The process returns a non-zero exit code if any promise check fails.
+
+`npm test` covers what this document does not promise: the arithmetic behind
+the palette, the structure of `css/tokens.css`, the gamut-mapping drift budget,
+and the measured figures quoted in N1, N2 and N3. CI runs both.

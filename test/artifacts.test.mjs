@@ -167,6 +167,36 @@ test('oklch.c remains a better choice than the css mapping method', () => {
     'css now drifts hue less than oklch.c');
 });
 
+/* ---------- the measured figures CONTRACT.md quotes in its non-promises ---
+ * N1, N2 and N3 state ratios in prose. Nothing asserted them, and two of the
+ * three had drifted from the data. Pinned here so the document and the
+ * palette cannot disagree again. A spec change that moves these should
+ * update docs/CONTRACT.md and this file together.
+ * ------------------------------------------------------------------------ */
+
+const chromatic = () => named(palette.scales).filter(([, s]) => s.kind === 'chromatic');
+const SHORT_OF_AA = ['yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky'];
+
+test('N1: seven hues, yellow through sky, fall short of 4.5:1 at step 600', () => {
+  const short = chromatic().filter(([, s]) => s.steps['600'].contrastWhite < 4.5);
+  assert.deepEqual(short.map(([n]) => n), SHORT_OF_AA);
+  const ratios = short.map(([, s]) => s.steps['600'].contrastWhite);
+  assert.equal(Math.min(...ratios), 4.09, 'N1 lower bound');
+  assert.equal(Math.max(...ratios), 4.49, 'N1 upper bound');
+});
+
+test('N2: seven hues cap below AAA at step 700', () => {
+  const short = chromatic().filter(([, s]) => s.steps['700'].contrastWhite < 7);
+  assert.deepEqual(short.map(([n]) => n), SHORT_OF_AA);
+  const ratios = short.map(([, s]) => s.steps['700'].contrastWhite);
+  assert.equal(Math.min(...ratios), 6.42, 'N2 lower bound');
+  assert.equal(Math.max(...ratios), 6.98, 'N2 upper bound');
+});
+
+test('N3: the decorative border step measures 1.70:1 on white', () => {
+  assert.equal(palette.scales.gray.steps['300'].contrastWhite, 1.7);
+});
+
 test('no harmony collapses onto a duplicate or self-referential hue', () => {
   // scripts/build.mjs states this as an audited property and skips the
   // exclusion logic that a tighter hue spacing would need. Asserted here so

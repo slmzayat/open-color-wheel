@@ -27,6 +27,8 @@ Open Color named its scales well but hand-picked its hex values, so contrast dri
 
 `data/spec.json` holds every hand-authored number. The build derives the rest, and adds P3 values, alpha approximations, [APCA](https://github.com/Myndex/apca-w3) scores, and harmonies snapped to real tokens. [`docs/CONTRACT.md`](docs/CONTRACT.md) states what this palette promises and what it does not.
 
+Requires Node 22 or newer.
+
 ```bash
 npm install
 npm run check   # rebuild from spec, then assert the contract
@@ -42,7 +44,9 @@ The two commands check different things, and CI runs both:
 - **`npm test`** covers the arithmetic in `scripts/color.mjs` and the shape of
   the generated files, including inputs the spec never produces: hue wraparound,
   degenerate alpha solves, gamut edges, and the drift budget the mapping has to
-  stay inside. It caught a hex serialization bug the contract checks could not see.
+  stay inside, plus the measured figures [`docs/CONTRACT.md`](docs/CONTRACT.md)
+  quotes in its non-promises. It caught a hex serialization bug the contract
+  checks could not see.
 
 ## Credits
 
@@ -53,4 +57,4 @@ The two commands check different things, and CI runs both:
 - Interface: [Radix Colors](https://www.radix-ui.com/colors), [Pantone](https://www.pantone.com), motion by [Emil Kowalski](https://github.com/emilkowalski/skills)
 - Built with Claude Opus 5 by Anthropic
 
-MIT for code and palette, OFL-1.1 for fonts, Apache-2.0 for icons.
+[MIT](LICENSE) for code and palette, OFL-1.1 for fonts, Apache-2.0 for icons.
