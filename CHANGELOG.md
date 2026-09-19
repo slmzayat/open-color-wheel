@@ -30,8 +30,8 @@ First public release. 242 colors across 22 scales, 11 steps each.
 - Documentation site with a swatch grid and a per-color detail dialog,
   self-hosted fonts, and no runtime dependencies.
 - `og.png`, a 1200x630 social preview rendered from the palette by the build.
-- `LICENSE`, `.gitattributes`, and CI running the contract, the tests and a
-  drift check on every push.
+- `LICENSE`, `.gitattributes`, and one CI workflow that runs the contract, the
+  tests and a drift check, then publishes to Pages only if all three pass.
 
 ### Fixed
 

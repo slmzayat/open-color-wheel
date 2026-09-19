@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "description": "A modernized Open Color for native CSS: OKLCH primitives with contrast verified on every commit.",
   "license": "MIT",
+  "homepage": "https://slmzayat.github.io/open-color-wheel/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slmzayat/open-color-wheel.git"
+  },
   "engines": {
     "node": ">=22.0.0"
   },

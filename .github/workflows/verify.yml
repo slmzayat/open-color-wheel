@@ -4,6 +4,16 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   contract:
@@ -19,6 +29,25 @@ jobs:
       # them and the diff shows up as a dirty tree.
       - run: npm run check
       - run: npm test
-      # Every file scripts/build.mjs writes belongs here.
+      # Every file the build writes belongs here.
       - name: generated files must match the spec
         run: git diff --exit-code css/tokens.css data/palette.js og.png
+
+  # Pages publishes only after the contract holds. Deploying from a separate
+  # workflow meant a red build still shipped, since GitHub gives no ordering
+  # between workflows without workflow_run indirection.
+  deploy:
+    needs: contract
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v5
