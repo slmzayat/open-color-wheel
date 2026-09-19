@@ -54,6 +54,10 @@
    * exports gray 900/200 for consumers; the site softens light mode to 800
    * (11.05:1, comfortably AAA) and lifts dark mode to 100 (16.91:1). */
   --color-text: light-dark(var(--color-gray-800), var(--color-gray-100));
+  /* Muted lifts a step in both directions too: 4.50:1 was bare AA and the
+   * weakest ink on the page. 7.04:1 light and 8.44:1 dark both clear AAA
+   * while staying clearly quieter than --color-text. */
+  --color-text-muted: light-dark(var(--color-gray-700), var(--color-gray-400));
 
   /* Column placement for the role banner above the grid. The role bindings
    * invert between schemes -- bg is 50 on light and 950 on dark, text is 900
@@ -69,6 +73,13 @@
   --ink-accent: var(--color-teal-text);
 
   --name-ink: var(--color-text);
+
+  /* Scrims and shadows mix from the palette's darkest gray rather than a raw
+   * black, so every colour on the page comes from the wheel. */
+  --scrim: color-mix(in oklab, var(--color-gray-950) 30%, transparent);
+  --scrim-strong: color-mix(in oklab, var(--color-gray-950) 45%, transparent);
+  --scrim-backdrop: color-mix(in oklab, var(--color-gray-950) 55%, transparent);
+  --shadow-strong: color-mix(in oklab, var(--color-gray-950) 16%, transparent);
 
   --wash-a: light-dark(var(--color-teal-100), var(--color-teal-900));
   --wash-b: light-dark(var(--color-pink-100), var(--color-pink-900));
@@ -324,7 +335,7 @@ a.gradient-ink {
   font-weight: var(--weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-text-muted);
+  color: var(--color-text);
 }
 
 .chip--grid:active, .chip--mini:active, .theme-toggle:active,
@@ -512,6 +523,7 @@ main {
   margin-bottom: var(--space-1);
 }
 
+.grid-groups > * { grid-row: 1; }
 .grid-group--backgrounds { grid-column: var(--groups-backgrounds); }
 .grid-group--borders { grid-column: var(--groups-borders); }
 .grid-group--interactive { grid-column: var(--groups-interactive); }
@@ -622,7 +634,7 @@ main {
 .chip--grid .chip__code {
   font-size: var(--text-2xs);
   font-weight: var(--weight-normal);
-  color: var(--color-text-muted);
+  color: var(--color-text);
   font-variant-numeric: tabular-nums;
 }
 
@@ -642,7 +654,7 @@ main {
     z-index: 20;
 
     transform: scale(1.18);
-    box-shadow: 0 0.375rem 1rem rgb(0 0 0 / 14%);
+    box-shadow: 0 0.375rem 1rem var(--shadow-strong);
   }
 
   .chip--grid:hover .chip__name,
@@ -679,9 +691,9 @@ main {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #fff;
+  color: var(--color-gray-50);
   font-weight: var(--weight-medium);
-  text-shadow: 0 1px 4px rgb(0 0 0 / 45%);
+  text-shadow: 0 1px 4px var(--scrim-strong);
 }
 
 .chip--hero .chip__label {
@@ -769,17 +781,17 @@ main {
 }
 
 .detail::backdrop {
-  background: rgb(0 0 0 / 0%);
+  background: transparent;
   transition: background-color var(--duration-base) ease,
     overlay var(--duration-base) allow-discrete,
     display var(--duration-base) allow-discrete;
 }
 
 .detail[open]::backdrop {
-  background: rgb(0 0 0 / 50%);
+  background: var(--scrim-backdrop);
 
   @starting-style {
-    background: rgb(0 0 0 / 0%);
+    background: transparent;
   }
 }
 
@@ -810,8 +822,8 @@ main {
   justify-content: center;
   border: none;
   border-radius: 999px;
-  background: rgb(0 0 0 / 30%);
-  color: #fff;
+  background: var(--scrim);
+  color: var(--color-gray-50);
   font-size: var(--text-md);
   line-height: 1;
   cursor: pointer;
@@ -820,7 +832,7 @@ main {
 }
 
 .floating-icon:hover {
-  background: rgb(0 0 0 / 45%);
+  background: var(--scrim-strong);
 }
 
 .back-button { left: var(--space-3); }
@@ -1007,7 +1019,7 @@ main {
 .chip--mini:hover,
 .chip--mini:focus-visible {
   transform: translateY(-2px);
-  box-shadow: 0 var(--space-1) var(--space-2) rgb(0 0 0 / 16%);
+  box-shadow: 0 var(--space-1) var(--space-2) var(--shadow-strong);
 }
 
 .chip--mini[aria-current="true"] {
