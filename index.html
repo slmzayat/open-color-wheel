@@ -42,8 +42,8 @@
 
     <h1 class="gradient-ink">Open Color Wheel</h1>
 
-    <p class="lede">Open Color Wheel rebuilds the Open Color palette in <a class="gradient-ink" href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch" target="_blank" rel="noopener noreferrer">OKLCH</a> to unify perceptual lightness across hues. Step 600 holds the same lightness in red as in teal, within 0.012 OKLCH, across 17 chromatic hues and 5 temperature-adjusted gray families.</p>
-    <p class="lede">A build script parses a single specification file, calculates all color values, and evaluates contrast against <a class="gradient-ink" href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" target="_blank" rel="noopener noreferrer">WCAG</a> standards. The build fails CI immediately if any 4.5:1 contrast pairing drops below threshold.</p>
+    <p class="lede">Open Color Wheel rebuilds Open Color in <a class="gradient-ink" href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch" target="_blank" rel="noopener noreferrer">OKLCH</a> so one step number means one lightness in every hue, within &Delta;L 0.012, across 17 chromatic hues and 5 temperature-adjusted gray families.</p>
+    <p class="lede">A single specification file generates every value. CI measures contrast against <a class="gradient-ink" href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" target="_blank" rel="noopener noreferrer">WCAG</a> on every commit and fails the build if any 4.5:1 pairing drops below threshold. APCA scores ship alongside, reported rather than promised.</p>
 
     <dl class="stats" aria-label="Palette statistics">
       <div class="stat">
@@ -64,7 +64,7 @@
   <main>
     <section class="grid-section">
       <h2 class="gradient-ink">Every scale, every step</h2>
-      <p>Hovering a swatch shows its design token usage. Clicking a swatch opens its color profile.</p>
+      <p>Hover any swatch to see its design token usage. Click to open its full profile: contrast, alpha, P3 and harmonies.</p>
 
       <div class="grid-scroll">
         <div id="grid" class="grid" aria-label="Color scales">

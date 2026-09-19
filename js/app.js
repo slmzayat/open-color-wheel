@@ -77,19 +77,27 @@ function syncThemeColor() {
 }
 
 function animateStats() {
-  const nodes = document.querySelectorAll('.stat-number');
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  for (const node of nodes) {
+  for (const node of document.querySelectorAll('.stat-number')) {
     const target = Number(node.textContent.replace(/,/g, ''));
     if (!Number.isFinite(target)) continue;
+
+    const settle = () => { node.textContent = target.toLocaleString('en-US'); };
+    if (reduced || document.visibilityState !== 'visible') { settle(); continue; }
+
     const duration = 900;
     const start = performance.now();
+    // The real figure lives only in this element's text, and the animation
+    // overwrites it, so a run that stops early leaves a wrong number on the
+    // page permanently. requestAnimationFrame stops in a background tab;
+    // timers do not, so this settles the truth whatever happens to the frames.
+    const safety = setTimeout(settle, duration + 400);
     const tick = (now) => {
       const t = Math.min(1, (now - start) / duration);
-      const eased = 1 - Math.pow(1 - t, 3);
-      node.textContent = Math.round(target * eased).toLocaleString('en-US');
+      node.textContent = Math.round(target * (1 - Math.pow(1 - t, 3))).toLocaleString('en-US');
       if (t < 1) requestAnimationFrame(tick);
+      else clearTimeout(safety);
     };
     requestAnimationFrame(tick);
   }
